@@ -120,6 +120,7 @@ namespace Mapsui.Samples.Forms
                         Position = mapClickedArgs.Point,
                         Type = PinType.Svg,
                         Scale = 0.1f,
+                        Transparency = 0.5f,
                         Svg = svgString
                     });
                     break;
