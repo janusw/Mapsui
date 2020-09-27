@@ -35,7 +35,7 @@ namespace Mapsui.Samples.Forms
 
         public void Setup(IMapControl mapControl)
         {
-            mapControl.Map = OsmSample.CreateMap();
+            mapControl.Map = BingSample.CreateMap();
         }
     }
 }

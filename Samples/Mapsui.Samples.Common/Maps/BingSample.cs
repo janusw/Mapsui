@@ -17,7 +17,7 @@ namespace Mapsui.Samples.Common.Maps
             mapControl.Map = CreateMap();
         }
 
-        public static Map CreateMap(KnownTileSource source = KnownTileSource.BingAerial)
+        public static Map CreateMap(KnownTileSource source = KnownTileSource.StamenWatercolor)
         {
             var map = new Map();
 
