@@ -25,6 +25,11 @@ public sealed class MainPage : ContentPage, IDisposable
         // Workaround. Samples need the MapControl in the current setup.
         mainViewModel.MapControl = mapControl;
 
+        PanGestureRecognizer panGesture = new PanGestureRecognizer();
+        panGesture.TouchPoints = 1;
+        panGesture.PanUpdated += OnPanUpdated;
+        mapControl.GestureRecognizers.Add(panGesture);
+
         Content = new Grid
         {
             ColumnDefinitions =
@@ -52,6 +57,12 @@ public sealed class MainPage : ContentPage, IDisposable
             }
         };
     }
+
+    private void OnPanUpdated(object? sender, PanUpdatedEventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine("OnPanUpdated");
+    }
+
 
     private static Picker CreatePicker(MainViewModel mainViewModel)
     {
