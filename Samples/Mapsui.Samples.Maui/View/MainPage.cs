@@ -28,7 +28,7 @@ public sealed class MainPage : ContentPage, IDisposable
         PanGestureRecognizer panGesture = new PanGestureRecognizer();
         panGesture.TouchPoints = 1;
         panGesture.PanUpdated += OnPanUpdated;
-        mapControl.GestureRecognizers.Add(panGesture);
+        mapControl.Content.GestureRecognizers.Add(panGesture);
 
         Content = new Grid
         {
