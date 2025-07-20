@@ -5,6 +5,7 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+        Mapsui.UI.Maui.MapControl.UseGPU = true;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
