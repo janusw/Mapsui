@@ -94,4 +94,13 @@ public sealed class MainPage : ContentPage, IDisposable
     {
         mapControl.Dispose();
     }
+
+    protected override void OnAppearing()
+    {
+#if ANDROID
+        mapControl.FixInvisible();
+#endif
+        base.OnAppearing();
+    }
+
 }
