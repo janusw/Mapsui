@@ -420,4 +420,63 @@ public partial class MapControl : ContentView, IMapControl, IDisposable
     private record struct PointerRecording(ScreenPosition ScreenPosition, long Timestamp)
     {
     }
+
+#if ANDROID
+        private static FieldInfo glThreadField;
+        private static FieldInfo glThreadExitedField;
+        private Task sizeNotifyTask;
+
+        private static void LoadReflectionFields(SkiaSharp.Views.Android.GLTextureView glTextureView)
+        {
+            if (glThreadExitedField is not null)
+                return;
+
+            glThreadField = typeof(SkiaSharp.Views.Android.GLTextureView).GetField("glThread", BindingFlags.NonPublic | BindingFlags.Instance);
+            var glThread = glThreadField.GetValue(glTextureView);
+            glThreadExitedField = glThread.GetType().GetField("exited", BindingFlags.Instance | BindingFlags.Public);
+        }
+#endif
+
+    /// <summary>
+    /// An SKGLView may become invisible when it is reappearing after being off-screen. Calling this hack will trigger the View to render again properly.
+    /// This is because the SkiaSharp.Views.Android.GLTextureView.GLThread is restarted when an SKGLView has reappeared, and it by default assumes that
+    /// the size of the View is (0, 0) until notified otherwise. Instead of resizing this View, we are calling the GLTextureView's
+    /// OnSurfaceTextureSizeChanged function, which in turn will call the GLThread's OnWindowResize(int width, int height)
+    /// with the actual View's size to kick the GLThread back into action.
+    /// </summary>
+    public void FixInvisible()
+    {
+#if ANDROID
+            var handler = _glView.Handler as SKGLViewHandler;
+            if (handler is not null)
+            {
+                SkiaSharp.Views.Android.GLTextureView glTextureView = handler.PlatformView;
+                LoadReflectionFields(glTextureView);
+
+                // Ensure there's only a single polling Task that will fix the SKGLView's internal render thread
+                if (sizeNotifyTask is not null && !sizeNotifyTask.IsCompleted)
+                {
+                    return;
+                }
+
+                sizeNotifyTask = Task.Run(async () =>
+                {
+                    while (true)
+                    {
+                        var glThread = glThreadField.GetValue(glTextureView);
+                        bool exited = (bool)glThreadExitedField.GetValue(glThread);
+                        if (exited)
+                        {
+                            // The TextureView still has its old glThread. Wait for the new glThread to be created
+                            await Task.Delay(30);
+                            continue;
+                        }
+                        // Now notify the glThread of the actual size of the View
+                        glTextureView.OnSurfaceTextureSizeChanged(null, glTextureView.Width, glTextureView.Height);
+                        return;
+                    }
+                });
+            }
+#endif
+    }
 }
