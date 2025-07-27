@@ -5,7 +5,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <TargetFrameworks>net8.0-android</TargetFrameworks>
-    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>22</SupportedOSPlatformVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>Mapsui.Android</PackageId>
     <Description>.Net Android map components based on the Mapsui library</Description>
