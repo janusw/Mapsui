@@ -931,6 +931,11 @@ public partial class MapControl : ContentView, IMapControl, IDisposable
         {
             Map?.Dispose();
         }
+
+#if ANDROID
+        DisposeAndroid();
+#endif
+
         CommonDispose(disposing);
     }
 
